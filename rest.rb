@@ -22,6 +22,9 @@ Plugin.create(:worldon) do
         next if hashes.nil?
         arr = hashes.value
         ids = arr.map{|hash| hash[:id].to_i }
+          #ミュート処理（arrから削除するが、配列idsからは削除していない）
+        mutes = pm::Status.mutes 
+        arr.delete_if{|status|  mutes.index(pm::Account.regularize_acct(status[:account])[:acct])}
         tl = pm::Status.build(domain, arr).concat(tl)
 
         notice "Worldon: REST取得数： #{ids.size} for #{slug}"
