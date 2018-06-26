@@ -252,6 +252,20 @@ Plugin.create(:worldon) do
     domain = connection[:opts][:domain]
     access_token = connection[:opts][:token]
     status = pm::Status.build(domain, [payload]).first
+
+     # ミュートしているユーザかチェック
+    mutes = pm::Status.mutes 
+    if payload[:account] && payload[:account][:acct]
+    account_hash = pm::Account.regularize_acct(payload[:account])
+    #pp account_hash
+      if mutes.index(account_hash[:acct])
+           #pp 'm u t e d'
+           #pp account_hash[:acct]
+           #$stdout.flush 
+           return
+      end
+    end
+
     Plugin.call(:extract_receive_message, datasource_slug, [status])
     world = stream_world(domain, access_token)
     Plugin.call(:update, world, [status])
