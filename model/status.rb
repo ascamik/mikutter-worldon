@@ -74,6 +74,10 @@ module Plugin::Worldon
         }
       end
 
+      def mutes
+        @@mutes
+      end
+
       def build(domain_name, json)
         return [] if json.nil?
         return build(domain_name, [json]) if json.is_a? Hash
@@ -154,13 +158,13 @@ module Plugin::Worldon
     end
 
     def initialize(hash)
-      @@mutes ||= []
-      if hash[:account] && hash[:account][:acct]
-        account_hash = Account.regularize_acct(hash[:account])
-        if @@mutes.index(account_hash[:acct])
-          return nil
-        end
-      end
+    #  @@mutes ||= [] #mute判定の場合を単にnilで返すとNoMethodErrorが出るのでこの方法なら下流に何らかの対策が必要。
+    #  if hash[:account] && hash[:account][:acct]
+    #    account_hash = Account.regularize_acct(hash[:account])
+    #    if @@mutes.index(account_hash[:acct])
+    #      return nil
+    #    end
+    #  end
 
       @reblog_status_uris = []
       @favorite_accts = []
